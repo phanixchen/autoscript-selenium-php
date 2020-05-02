@@ -44,6 +44,67 @@ class PtjController extends ControllerBase
         {
             ControlTerm::postProcess($l_lkv[$i]);
 
+            // merge controller term
+            $lKV = $l_lkv[$i];
+            for ($j = count($lKV) - 1; $j >=0 ; $j--)
+            {
+                switch (strtoupper($lKV[$j][1]))
+                {
+                    case "FW":
+                        if ($lKV[$j][0] == "\"")
+                        {
+                            for ($itmp = $j-1; $itmp >= 0; $itmp-- )
+                            {
+                                if ($lKV[$itmp][0] == "\"")
+                                {
+                                    $str_newterm = "";
+                                    for ($iconcat = $itmp+1;$iconcat < $j; $iconcat++)
+                                    {
+                                        $str_newterm .= $lKV[$iconcat][0];
+                                    }
+                                    if (ControlTerm::_inCtrlTerms($str_newterm, "char"))
+                                    {
+                                        $lKV[$itmp+1][0] = $str_newterm;
+                                        $lKV[$itmp+1][1] = "NB";
+
+                                        for ($iconcat = $itmp+2;$iconcat < $j; $iconcat++)
+                                        {
+                                            unset($lKV[$iconcat]);
+                                        }
+                                    }
+                                    else if (ControlTerm::_inCtrlTerms($str_newterm, "props"))
+                                    {
+                                        $lKV[$itmp+1][0] = $str_newterm;
+                                        $lKV[$itmp+1][1] = "NA";
+
+                                        for ($iconcat = $itmp+2;$iconcat < $j; $iconcat++)
+                                        {
+                                            unset($lKV[$iconcat]);
+                                        }
+                                    }
+                                    else if (ControlTerm::_inCtrlTerms($str_newterm, "sets"))
+                                    {
+                                        $lKV[$itmp+1][0] = $str_newterm;
+                                        $lKV[$itmp+1][1] = "NC";
+
+                                        for ($iconcat = $itmp+2;$iconcat < $j; $iconcat++)
+                                        {
+                                            unset($lKV[$iconcat]);
+                                        }
+                                    }
+
+                                    $j = $itmp;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+            $l_lkv[$i] = array_values($lKV);
+
+            var_dump($l_lkv[$i]);
+
             array_push($lJson, json_decode($pa->cKVlistToJson_v2($l_lkv[$i], FindModelFilePref::YesAndSimilar, DbMode::Remote)));
         }
 
@@ -55,7 +116,8 @@ class PtjController extends ControllerBase
         $resp->setHeader("Access-Control-Allow-Origin", "*");
         $resp->setHeader('Access-Control-Allow-Headers', 'X-Requested-With');
         $resp->sendHeaders();
-        $resp->setContent(json_encode($lJson, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT));
+        // $resp->setContent(json_encode($lJson, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT));
+        $resp->setContent(json_encode($lJson));
         $resp->send();
         return;
     }

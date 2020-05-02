@@ -27,6 +27,16 @@ class ControlTerm
         return (strlen($a) > strlen($b))? -1 : 1;
     }
 
+    public static function _inCtrlTerms($key, $termtype)
+    {
+        if ($termtype == "char")
+            return in_array($key, self::$arrchars);
+        if ($termtype == "props")
+            return in_array($key, self::$arrprops);
+        if ($termtype == "sets")
+            return in_array($key, self::$arrsets);
+    }
+
 	public static function checkInControlTerms($input)
     {
         // echo $input;

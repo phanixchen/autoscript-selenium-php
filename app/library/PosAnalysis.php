@@ -149,6 +149,7 @@ class PosAnalysis
 
         for ($i = 0; $i < count($lKV); $i++)
         {
+
             switch (strtoupper($lKV[$i][1]))
             {
                 case "ND":
@@ -170,10 +171,11 @@ class PosAnalysis
 
                 case "VA":
                 case "VG":
+                case "VD":
                 case "VC":  //及物動詞
                 case "VCL": //有目的地的動詞, 前往、走向
                 case "VE":
-                    array_push($propcandidate, $i);
+                    array_push($mocapcandidate, $i);
                     $iVerb = $i;
 
                     break;
@@ -246,7 +248,7 @@ class PosAnalysis
                                 if ($itmpobj > $iVerb)
                                 {
                                     // check in char list
-                                    checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
+                                    $this->checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
 
                                     $_action->target = $itmpobj;
                                     array_push($charaction_tmplist, $_action);
@@ -263,7 +265,7 @@ class PosAnalysis
                                 if ($itmpobj > $iVerb)
                                 {
                                     // check in char list
-                                    checkInCharListOrAdd($itmpobj, $lKV, $proplist, $findPreference);
+                                    $this->checkInCharListOrAdd($itmpobj, $lKV, $proplist, $findPreference);
 
                                     $_action->target = $itmpobj;
                                     array_push($charaction_tmplist, $_action);
@@ -289,7 +291,7 @@ class PosAnalysis
                                 if ($itmpobj < $iVerb)
                                 {
                                     // check in char list
-                                    $iFound = checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
+                                    $iFound = $this->checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
 
                                     foreach ($charaction_tmplist as $ca)
                                         array_push($charlist[$iFound]->actions, $ca);
@@ -306,7 +308,7 @@ class PosAnalysis
                                 if ($itmpobj < $iVerb)
                                 {
                                     // check in char list
-                                    $iFound = checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
+                                    $iFound = $this->checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
 
                                     foreach ($charaction_tmplist as $ca)
                                         array_push($charlist[$iFound]->actions, $ca);
@@ -322,7 +324,7 @@ class PosAnalysis
                             //沒有找到主詞，那就是前一句的主詞
                             if ($bHasSub == false)
                             {
-                                $iFound = checkInCharListOrAdd($iPreSub, $lKV, $charlist, $findPreference);
+                                $iFound = $this->checkInCharListOrAdd($iPreSub, $lKV, $charlist, $findPreference);
 
                                 foreach ($charaction_tmplist as $ca)
                                     array_push($charlist[$iFound]->actions, $ca);
@@ -346,6 +348,7 @@ class PosAnalysis
                     $iVerb = -1;
                     break;
 
+                
                 default:
                     if (substr(strtoupper($lKV[$i][0]), 0, 1) == "N")
                     {
