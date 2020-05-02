@@ -47,8 +47,17 @@ class PtjController extends ControllerBase
             array_push($lJson, json_decode($pa->cKVlistToJson_v2($l_lkv[$i], FindModelFilePref::YesAndSimilar, DbMode::Remote)));
         }
 
-        var_dump(json_encode($lJson));
+        // var_dump(json_encode($lJson));
 
+        $resp = new \Phalcon\Http\Response();
+        $resp->setStatusCode(200, "OK");
+        $resp->setHeader("Content-Type", "application/json");
+        $resp->setHeader("Access-Control-Allow-Origin", "*");
+        $resp->setHeader('Access-Control-Allow-Headers', 'X-Requested-With');
+        $resp->sendHeaders();
+        $resp->setContent(json_encode($lJson, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT));
+        $resp->send();
+        return;
     }
 
 }
