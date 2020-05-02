@@ -38,7 +38,7 @@ class PosAnalysis
         //char[] sep = new char[] { '(', ')' };
         foreach ($arr as $pair)
         {
-            var_dump($pair);
+            // var_dump($pair);
             if (strpos($pair, "-------") !== false) break;
 
             $tmppair = array_filter($this->multiexplode( array("(", ")"), trim($pair) ) );
@@ -444,7 +444,7 @@ class PosAnalysis
         {
             for ($i = 0; $i < count($proplist); $i++)
             {
-                var_dump($proplist[$i]);
+                // var_dump($proplist[$i]);
                 if ($proplist[$i]->name == $lKV[$iCandidateIndex][0])
                 {
                     //find!

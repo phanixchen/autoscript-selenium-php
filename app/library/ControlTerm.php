@@ -73,7 +73,7 @@ class ControlTerm
         self::postProcessProps($lKV);
         self::postProcessSets($lKV);
 
-        var_dump($lKV);
+        // var_dump($lKV);
     }
 
     public static function postProcessProps(&$lKV)

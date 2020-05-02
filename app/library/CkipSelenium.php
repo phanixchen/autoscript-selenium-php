@@ -15,10 +15,10 @@ class CkipSelenium
     {
         $capabilities = DesiredCapabilities::firefox();
 
-        // $capabilities->setCapability(
-        //     'moz:firefoxOptions',
-        //    ['args' => ['-headless']]
-        // );
+        $capabilities->setCapability(
+            'moz:firefoxOptions',
+           ['args' => ['-headless']]
+        );
         $host = 'http://localhost:4444'; // this is the default
 
 
@@ -68,7 +68,7 @@ class CkipSelenium
 
         if ($retry_count>=15) 
         {
-            echo "find 包含未知詞的斷詞標記結果 error\r\n";
+            // echo "find 包含未知詞的斷詞標記結果 error\r\n";
             return;
         }
         $ele->Click();
@@ -90,7 +90,7 @@ class CkipSelenium
 
         if ($retry_count>=15) 
         {
-            echo "find pre tag error\r\n";
+            // echo "find pre tag error\r\n";
             return;
         }
         // var_dump($ele);

@@ -30,7 +30,7 @@ class PtjController extends ControllerBase
 // \r\n
 // ";
 
-        echo $ret . "\r\n\r\n";
+        // echo $ret . "\r\n\r\n";
 
         $test->TeardownTest();
 
@@ -44,10 +44,10 @@ class PtjController extends ControllerBase
         {
             ControlTerm::postProcess($l_lkv[$i]);
 
-            array_push($lJson, $pa->cKVlistToJson_v2($l_lkv[$i], FindModelFilePref::YesAndSimilar, DbMode::Remote));
+            array_push($lJson, json_decode($pa->cKVlistToJson_v2($l_lkv[$i], FindModelFilePref::YesAndSimilar, DbMode::Remote)));
         }
 
-        var_dump($lJson);
+        var_dump(json_encode($lJson));
 
     }
 
