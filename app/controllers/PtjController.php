@@ -103,7 +103,7 @@ class PtjController extends ControllerBase
             }
             $l_lkv[$i] = array_values($lKV);
 
-            var_dump($l_lkv[$i]);
+            // var_dump($l_lkv[$i]);
 
             array_push($lJson, json_decode($pa->cKVlistToJson_v2($l_lkv[$i], FindModelFilePref::YesAndSimilar, DbMode::Remote)));
         }
