@@ -219,7 +219,7 @@ class PosAnalysis
 
                             #region find out action
                             // __construct($_name, $_target, $_pos, $_asset, $_assetname)
-                            $_action = new CharAction($lKV[$iVerb][0], -1, $lKV[$iVerb][1], "dummyfile", "dummy_actionname");
+                            // $_action = new CharAction($lKV[$iVerb][0], -1, $lKV[$iVerb][1], "dummyfile", "dummy_actionname");
                             /*fofMocap.Init(findPreference, lKV[iVerb].Key, AssetType.Mocap);
                             fofMocap.find();
 
@@ -247,6 +247,7 @@ class PosAnalysis
                             {
                                 if ($itmpobj > $iVerb)
                                 {
+                                    $_action = new CharAction($lKV[$iVerb][0], -1, $lKV[$iVerb][1], "dummyfile", "dummy_actionname");
                                     // check in char list
                                     $this->checkInCharListOrAdd($itmpobj, $lKV, $charlist, $findPreference);
 
@@ -264,6 +265,7 @@ class PosAnalysis
                             {
                                 if ($itmpobj > $iVerb)
                                 {
+                                    $_action = new CharAction($lKV[$iVerb][0], -1, $lKV[$iVerb][1], "dummyfile", "dummy_actionname");
                                     // check in char list
                                     $this->checkInCharListOrAdd($itmpobj, $lKV, $proplist, $findPreference);
 

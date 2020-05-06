@@ -17,7 +17,6 @@ class ControlTerm
         usort(self::$arrprops, "self::cmp_length");
         usort(self::$arrsets, "self::cmp_length");
 
-        // var_dump(self::$arrprops);
     }
 
     private static function cmp_length($a, $b)
@@ -63,11 +62,11 @@ class ControlTerm
     private static function AddQuoteToControllTerms($sentence, $target)
     {
         if (count($target) == 0) return $sentence;
+
         foreach ($target as $s)
         {
-            // echo $s . "\r\n";
             if (trim($s) == "") continue;
-            if (strpos($sentence, $s) != false)
+            if (strpos($sentence, $s) !== false)
             {
                 $sentence = str_replace("$s", "\"" . $s . "\"", $sentence);
             }
