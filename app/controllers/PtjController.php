@@ -2,6 +2,14 @@
 
 class PtjController extends ControllerBase
 {
+    public function testAction()
+    {
+        $this->view->disable();
+        $tt = new Ckiptagger();
+        $data = $tt->postagging("1234\r\n");
+
+        echo $data;
+    }
 
     public function indexAction()
     {
@@ -22,8 +30,8 @@ class PtjController extends ControllerBase
 
         // echo $input . "\r\n";
 
-        $test = new CkipSelenium();
-        $ret = $test->TheSeleniumTest($input);
+        // $test = new CkipSelenium();
+        // $ret = $test->TheSeleniumTest($input);
 
 //         $ret = "艾瑪(Nb)　從(P)　\"(FW)　咖啡廳(Nc)　\"(FW)　走出(VCL)　來到(VCL)　馬路(Na)　上(Ncd)　。(PERIODCATEGORY)\r\n
 // ----------------------------------------------------------------------------------------------------------------------------------\r\n
@@ -32,7 +40,9 @@ class PtjController extends ControllerBase
 
         // echo $ret . "\r\n\r\n";
 
-        $test->TeardownTest();
+        // $test->TeardownTest();
+        $ckip_tagger = new Ckiptagger();
+        $ret = $ckip_tagger->postagging($input);
 
         $pa = new PosAnalysis();
 
