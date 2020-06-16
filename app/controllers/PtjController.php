@@ -11,7 +11,40 @@ class PtjController extends ControllerBase
         echo $data;
     }
 
-    public function indexAction()
+    // public function testAction()
+    // {
+    //     $inputstring = '"(FW)　風太(Na)　"(FW)　遞給(VD)　"(FW)　小鈴(Nb)　"(FW)　一(Neu)　本(Nf)　書(Na)　。(PERIODCATEGORY)　';
+    //     $repstring = "";
+    //     echo preg_replace('pattern', replacement, $inputstring);
+    // }
+
+    public function oldindexAction()
+    {
+        $this->view->disable();
+        
+        if (!$this->request->isPost()) {
+            return $this->http405();
+        }
+        
+        // Check parameters
+        if (isset($_POST["story"]) == false || isset($_POST["chars"]) == false || isset($_POST["props"]) == false || isset($_POST["sets"]) == false)
+        {
+            return $this->http400("Parameter missing");
+        }
+
+        ControlTerm::InitPreTerms($_POST["chars"], $_POST["props"], $_POST["sets"]);
+        $input = ControlTerm::checkInControlTerms($_POST["story"]);
+
+        $ckip_tagger = new Ckiptagger();
+        $ret = $ckip_tagger->postagging($input);
+var_dump($ret);
+        $tmparr = explode('"(FW)　', $ret);
+        $newret = implode("", $tmparr);
+var_dump($newret);
+        return;
+    }
+
+    public function oldindexAction()
     {
     	$this->view->disable();
         
