@@ -18,7 +18,7 @@ class PtjController extends ControllerBase
     //     echo preg_replace('pattern', replacement, $inputstring);
     // }
 
-    public function oldindexAction()
+    public function indexAction()
     {
         $this->view->disable();
         
