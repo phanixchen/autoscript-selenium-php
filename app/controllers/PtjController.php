@@ -38,6 +38,35 @@ class PtjController extends ControllerBase
         $ckip_tagger = new Ckiptagger();
         $ret = $ckip_tagger->postagging($input);
 var_dump($ret);
+
+        $istart = 0;
+        $inext = 0;
+
+        // search control terms
+        while (strrpos($ret, '"(FW)　', $istart) !== false)
+        {
+            $istart = strrpos($ret, '"(FW)　', $istart);
+            if (strrpos($ret, '"(FW)　', $istart) !== false)
+            {
+                $inext = strrpos($ret, '"(FW)　', $istart);
+
+                $strtmp = substr($ret, $istart+6, $inext-$istart-6);
+                var_dump($strtmp);
+                $tmparr = preg_split( "/ (\(|\)　) /", $strtmp );
+                $strtmp = "";
+                for ($itmp = 0; $itmp < count($tmparr); $itmp= $itmp +2)
+                {
+                    $strtmp+=$tmparr[$itmp];
+                }
+                var_dump($strtmp);
+                return;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return;
         $tmparr = explode('"(FW)　', $ret);
         $newret = implode("", $tmparr);
 var_dump($newret);
