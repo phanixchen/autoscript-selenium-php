@@ -166,8 +166,10 @@ echo "\r\n\r\n";
     {
         $this->view->disable();
         $input = [];
-        $input[0] = "#1:1.[0] S(theme:NP(DUMMY1:Nba(DUMMY1:Nba(DUMMY1:Nba:小鈴|Head:Caa:、|DUMMY2:Nba:風太)|Head:Caa:、|DUMMY2:Nba:美穗)|Head:Caa:和|DUMMY2:NP(quantity:Daa:另外|quantifier:DM:一位|Head:Nab:同學))|manner:Dh:一起|Head:VA11:走|location:PP(Head:P21:在|DUMMY:NP(property:Ncb:校園|Head:Ncda:裡)))#。(PERIODCATEGORY)";
-        $input[1] = "#2:1.[0] S(agent:NP(Head:Nba:風太)|Head:VD1:遞給|goal:NP(Head:Nba:小鈴)|theme:NP(quantifier:DM:一本|Head:Nab:書))#。(PERIODCATEGORY)";
+        // $input[0] = "#1:1.[0] S(theme:NP(DUMMY1:Nba(DUMMY1:Nba(DUMMY1:Nba:小鈴|Head:Caa:、|DUMMY2:Nba:風太)|Head:Caa:、|DUMMY2:Nba:美穗)|Head:Caa:和|DUMMY2:NP(quantity:Daa:另外|quantifier:DM:一位|Head:Nab:同學))|manner:Dh:一起|Head:VA11:走|location:PP(Head:P21:在|DUMMY:NP(property:Ncb:校園|Head:Ncda:裡)))#。(PERIODCATEGORY)";
+        // $input[1] = "#2:1.[0] S(agent:NP(Head:Nba:風太)|Head:VD1:遞給|goal:NP(Head:Nba:小鈴)|theme:NP(quantifier:DM:一本|Head:Nab:書))#。(PERIODCATEGORY)";
+        $input[0] = "S(theme:NP(DUMMY1:Nba(DUMMY1:Nba(DUMMY1:Nba:小鈴|Head:Caa:、|DUMMY2:Nba:風太)|Head:Caa:、|DUMMY2:Nba:美穗)|Head:Caa:和|DUMMY2:NP(quantity:Daa:另外|quantifier:DM:一位|Head:Nab:同學))|manner:Dh:一起|Head:VA11:走|location:PP(Head:P21:在|DUMMY:NP(property:Ncb:校園|Head:Ncda:裡)))#";
+        $input[1] = "S(agent:NP(Head:Nba:風太)|Head:VD1:遞給|goal:NP(Head:Nba:小鈴)|theme:NP(quantifier:DM:一本|Head:Nab:書))#";
 
         $pa = new ParseresultTojson();
 
