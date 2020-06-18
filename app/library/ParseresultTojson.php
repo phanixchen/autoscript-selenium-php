@@ -23,7 +23,7 @@ class ParseresultTojson //implements Ckip
         fputs($file, $_text);
         fclose($file);
 
-        exec(self::$application_base_path . "tree.py -i " . self::$input_path . $filename . " -o " . self::$output_path . $filename);
+        exec(self::$application_base_path . "tree.py -i " . self::$input_path . $filename . ".txt -o " . self::$output_path . $filename . ".txt");
         sleep(1);
 
 
