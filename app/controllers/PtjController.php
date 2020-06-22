@@ -38,7 +38,7 @@ class PtjController extends ControllerBase
         $ckip_tagger = new Ckiptagger();
         $ret = $ckip_tagger->postagging($input);
 
-        
+
         $arr_ctrlchars = explode(",", $_POST["chars"]);
         $arr_ctrlprops = explode(",", $_POST["props"]);
         $arr_ctrlsets = explode(",", $_POST["sets"]);
@@ -167,6 +167,87 @@ class PtjController extends ControllerBase
 
 
         return;
+    }
+
+    public function jsonparsingAction($input = null)
+    {
+        $this->view->disable();
+
+        if ($input == null)
+            $input = '{"id": 0, "data": {"role": null, "pos": "%", "word": null}, "children": [{"id": 1, "data": {"role": "predication", "pos": "S", "word": null}, "children": [{"id": 2, "data": {"role": "agent", "pos": "NP", "word": null}, "children": [{"id": 3, "data": {"role": "Head", "pos": "Nba", "word": "\u67ef\u666f\u9a30"}, "children": []}]}, {"id": 4, "data": {"role": "Head", "pos": "VC31", "word": "\u62ff"}, "children": []}, {"id": 5, "data": {"role": "aspect", "pos": "Di", "word": "\u8457"}, "children": []}, {"id": 6, "data": {"role": "theme", "pos": "NP", "word": null}, "children": [{"id": 7, "data": {"role": "Head", "pos": "Nab", "word": "\u81c9\u76c6"}, "children": []}]}, {"id": 8, "data": {"role": "complement", "pos": "VP", "word": null}, "children": [{"id": 9, "data": {"role": "Head", "pos": "VC1", "word": "\u7d93\u904e"}, "children": []}, {"id": 10, "data": {"role": "goal", "pos": "NP", "word": null}, "children": [{"id": 11, "data": {"role": "Head", "pos": "Nba", "word": "\""}, "children": []}]}, {"id": 12, "data": {"role": "goal", "pos": "NP", "word": null}, "children": [{"id": 13, "data": {"role": "property", "pos": "Ncb", "word": "\u5bbf\u820d"}, "children": []}, {"id": 14, "data": {"role": "property", "pos": "Nba", "word": "\"\""}, "children": []}, {"id": 15, "data": {"role": "property", "pos": "A", "word": "\u516c\u5171"}, "children": []}, {"id": 16, "data": {"role": "Head", "pos": "Nab", "word": "\u96fb\u8a71"}, "children": []}]}]}]}, {"id": 17, "data": {"role": "property", "pos": "Nba", "word": "\""}, "children": []}]}';
+
+        $obj = json_decode($input);
+        $obj = $obj->children;
+        
+        $idepth = 0;
+        $i = 0;
+        $arrS = [];
+        $arrV = [];
+        $arrO = [];
+        $arrSet = [];
+        $bHeadV = false;
+        $_queue = [];
+        foreach ($obj as $o)
+            array_push($_queue, $o);
+
+        while (count($_queue) > 0)
+        {
+            $o = array_shift($_queue);
+            $this->tracetree($o, $idepth, $arrS, $arrV, $arrO, $arrSet, $bHeadV, $obj, $_queue);
+        }
+            
+        
+        var_dump($arrS);
+    }
+
+    public function tracetree(&$node, $idepth, &$arrS, &$arrV, &$arrO, &$arrSet, &$bHeadV, &$originobj, &$_queue)
+    {
+        if ($bHeadV == false)
+        {
+            // var_dump($node->data->role);
+            if ($node->data->role == "Head")
+            {
+
+                if (substr($node->data->pos, 0, 1) == "V" && $node->data->word != null)
+                {
+                    // 
+                    $bHeadV = true;
+                    var_dump($node);
+                    $array_push($arrV, $node);
+                    $this->getS($originobj, $arrS, $node->id);
+// var_dump($node);
+                }
+            }
+        }
+        else
+        {
+
+        }
+
+
+        foreach ($node->children as $o)
+            array_push($_queue, $o);
+    }
+
+    public function getS($originobj, &$arrS, $id)
+    {
+        foreach ($originobj as $o)
+        {
+            if ($o->id < $id && substr($o->data->pos, 0, 1) == "N" && $o->data->word != null)
+            {
+                echo "PUSH\n\n";
+                if (isset($o->actions) == false)
+                {
+                    $o->actions = [];
+                }
+                array_push($o->actions, $id);
+                array_push($arrS, $o);
+            }
+            if ($o->children != null)
+            {
+                $this->getS($o->children, $arrS, $id);
+            }
+        }
     }
 
     public function parsetestAction()
@@ -324,6 +405,10 @@ class PtjController extends ControllerBase
         $input[1] = "#2:1.[0] S(agent:NP(Head:Nba:風太)|Head:VD1:遞給|goal:NP(Head:Nba:小鈴)|theme:NP(quantifier:DM:一本|Head:Nab:書))#。(PERIODCATEGORY)";
         // $input[0] = "S(theme:NP(DUMMY1:Nba(DUMMY1:Nba(DUMMY1:Nba:小鈴|Head:Caa:、|DUMMY2:Nba:風太)|Head:Caa:、|DUMMY2:Nba:美穗)|Head:Caa:和|DUMMY2:NP(quantity:Daa:另外|quantifier:DM:一位|Head:Nab:同學))|manner:Dh:一起|Head:VA11:走|location:PP(Head:P21:在|DUMMY:NP(property:Ncb:校園|Head:Ncda:裡)))#";
         // $input[1] = "S(agent:NP(Head:Nba:風太)|Head:VD1:遞給|goal:NP(Head:Nba:小鈴)|theme:NP(quantifier:DM:一本|Head:Nab:書))#";
+
+        $input[0] = "#1:1.[0] S(agent:NP(Head:Nba:柯景騰)|Head:VC31:拿|aspect:Di:著|theme:NP(Head:Nab:臉盆)|complement:VP(Head:VC1:經過|goal:NP(property:Ncb:宿舍|property:A:公共|Head:Nab:電話)))#，(COMMACATEGORY)";
+        $input[1] = "#2:1.[0] VP(manner:VH11:若有所思|Head:VC2:看|aspect:Di:了|goal:NP(predication:V‧的(head:VA4:排隊|Head:DE:的)|possessor:Nab:人|Head:Nab:龍|quantifier:DM:一眼))#，(COMMACATEGORY)";
+        $input[2] = "#3:1.[0] VP(manner:V‧地(head:VH11:落寞|Head:DE:地)|Head:VC1:走過)#。(PERIODCATEGORY)";
 
         var_dump($input);
         $tmp = $this->parsetojson($input);
