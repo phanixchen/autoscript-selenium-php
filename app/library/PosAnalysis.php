@@ -19,10 +19,161 @@ class PosAnalysis
     //     set { cnString = value; }
     // }
 
+
     private function multiexplode ($delimiters,$data) {
         $MakeReady = str_replace($delimiters, $delimiters[0], $data);
         $Return    = explode($delimiters[0], $MakeReady);
         return  $Return;
+    }
+
+    public function addGeneralObjtoArray(&$arrobj, $obj)
+    {
+        // var_dump($obj);
+        // var_dump($arrobj);
+        $bfound = false;
+        foreach ($arrobj as $o)
+        {
+            if ($o->name == $obj->name)
+            {
+                $bfound = true;
+                break;
+            }
+        }
+
+        if ($bfound == false)
+            array_push($arrobj, $obj);
+        // echo "========================\n";
+        //         var_dump($arrobj);
+
+    }
+
+    public function parsetoJson($arrinput)
+    {
+        $scenes = [];
+        $chars = [];
+        $sets = [];
+        $props = [];
+        $charactions = [];
+
+        $charcandidate = [];
+        $propcandidate = [];
+        $setcandidate = [];
+        $mocapcandidate = [];
+
+        $scenen = null;
+        $indent = -1;
+        foreach ($arrinput as $arr)
+        {
+            $arr_parse_sentence = preg_split( "/[\||(|)]/", $arr ); // explode by @ and vs
+
+            // var_dump($arr_parse_sentence);
+            
+            // process sentence by sentence
+            for ($i = 0; $i < count($arr_parse_sentence); $i++)
+            {
+                if (strpos($arr_parse_sentence[$i], "] S") == strlen($arr_parse_sentence[$i]) - 3)
+                {
+                    if ($scene != null) array_push($scenes, $scene);
+                    $scenen = new Scene();
+
+                    $indent = 0;
+
+                    continue;
+                }
+
+                switch ($arr_parse_sentence[$i])
+                {
+                    case "PERIODCATEGORY":
+                    case "EXCLAMATIONCATEGORY":
+                    case "QUESTIONCATEGORY":
+                    case "COMMACATEGORY":
+                        var_dump($charcandidate);
+                        var_dump($mocapcandidate);
+                        var_dump($propcandidate);
+                        var_dump($setcandidate);
+
+                        var_dump($chars);
+                        var_dump($charactions);
+                        var_dump($props);
+                        var_dump($sets);
+
+                        $charcandidate = [];
+                        $propcandidate = [];
+                        $setcandidate = [];
+                        $mocapcandidate = [];
+
+                        $charactions = [];
+                        break;
+
+                    case "":
+                        $indent--;
+                        break;
+                    
+                    default:
+                        $arr_parsenode = explode(":", $arr_parse_sentence[$i]);
+                        if (count($arr_parsenode) == 2)
+                        {
+                            $indent++;
+                            continue;
+                        }
+                        if (count($arr_parsenode) == 3)
+                        {
+                            switch (strtoupper($arr_parsenode[1]))
+                            {
+                                case "ND":
+                                    $scene->timelight = $arr_parsenode[2];
+                                    break;
+
+                                case "NB": //人的機會很大
+                                case "NBA":
+                                case "NH": //代名詞, 你我他
+                                    $tmp = new Char($arr_parsenode[2], $i, "dummyfile", "dummyname", $arr_parsenode[1], [], []); // ($_name, $_id, $_asset, $_assetname, $_pos, $_action_list, $_adjunct_descriptions)
+                                    $this->addGeneralObjtoArray($chars, $tmp);
+                                    array_push($charcandidate, [$i, $indent]);
+                                    break;
+
+                                case "NC": //地點場景的機會很大
+                                case "NCB":
+                                    $tmp = new PropSet($arr_parsenode[2], $i, $arr_parsenode[1], "dummyname", "dummyfile"); //($_name, $_id, $_pos, $_asset, $_assetname)
+                                    $this->addGeneralObjtoArray($props, $tmp);
+                                    array_push($setcandidate, [$i, $indent]);
+                                    break;
+
+                                case "NA": //物品的機會很大
+                                case "NAB":
+                                    $tmp = new PropSet($arr_parsenode[2], $i, $arr_parsenode[1], "dummyname", "dummyfile"); //($_name, $_id, $_pos, $_asset, $_assetname)
+                                    $this->addGeneralObjtoArray($sets, $tmp);
+                                    array_push($propcandidate, [$i, $indent]);
+                                    break;
+
+                                case "VA":
+                                case "VA1":
+                                case "VA11":
+                                case "VG":
+                                case "VD":
+                                case "VD1":
+                                case "VC":  //及物動詞
+                                case "VCL": //有目的地的動詞, 前往、走向
+                                case "VE":
+                                    $tmp = new CharAction($arr_parsenode[2], -1, $i, $arr_parsenode[1], "dummyfile", "dummyname"); // ($_name, $_target, $_id, $_pos, $_asset, $_assetname)
+                                    $this->addGeneralObjtoArray($charactions, $tmp);
+                                    array_push($mocapcandidate, [$i, $indent]);
+                                    // $iVerb = $i;
+
+                                    break;
+
+                                default:
+                                    echo "unexpected: \n";
+                                    var_dump($arr_parse_sentence[$i]);
+                                    echo "unexpected end.\n";
+                                    break;
+                            }
+                        }
+                        break;
+                }
+                
+            }
+        }
     }
 
     public function posConvertToJsonObj($posstring)
@@ -655,16 +806,25 @@ class Scene
     }
 }
 
-/// <summary>
-/// 腳色
-/// </summary>
-class Char
+class GeneralObject
 {
     public $name;
     public $id;
     public $asset;
     public $assetname;
     public $pos;
+}
+
+/// <summary>
+/// 腳色
+/// </summary>
+class Char extends GeneralObject
+{
+    // public $name;
+    // public $id;
+    // public $asset;
+    // public $assetname;
+    // public $pos;
     public $actions = [];
     public $adjunct_descriptions = [];
 
@@ -719,13 +879,13 @@ class Char
 /// <summary>
 /// 場景、道具共用 struct
 /// </summary>
-class PropSet
+class PropSet extends GeneralObject
 {
-    public $name;
-    public $id;
-    public $pos;
-    public $asset;
-    public $assetname;
+    // public $name;
+    // public $id;
+    // public $pos;
+    // public $asset;
+    // public $assetname;
 
     public function __construct($_name, $_id, $_pos, $_asset, $_assetname)
     {
@@ -764,21 +924,22 @@ class PropSet
 /// <summary>
 /// 腳色動作
 /// </summary>
-class CharAction
+class CharAction extends GeneralObject
 {
-    public $name;
+    // public $name;
     public $target;
-    public $pos;
-    public $asset;
-    public $assetname;
+    // public $pos;
+    // public $asset;
+    // public $assetname;
 
-    public function __construct($_name, $_target, $_pos, $_asset, $_assetname)
+    public function __construct($_name, $_target, $_id, $_pos, $_asset, $_assetname)
     {
         $this->name = $_name;
         $this->target = $_target;
         $this->pos = $_pos;
         $this->asset = $_asset;
         $this->assetname = $_assetname;
+        $this->id = $_id;
     }
 
     /*public function CharAction($_name, $_target, $_pos, $_asset, $_assetname)

@@ -26,7 +26,7 @@ class Ckiptagger //implements Ckip
         $str_result = "";
         while(1)
         {
-            sleep(5);
+            sleep(2);
 
             if (file_exists(self::$posoutput_path . $filename . ".txt"))
             {
